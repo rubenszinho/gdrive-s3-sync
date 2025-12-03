@@ -12,7 +12,7 @@ logger = structlog.get_logger()
 
 
 @app.task(bind=True, name="tasks.sync_gdrive_to_s3")
-def sync_gdrive_to_s3(self, dry_run: bool = None, force_full: bool = None) -> dict:
+def sync_gdrive_to_s3(self, dry_run: bool = False, force_full: bool = False) -> dict:
     log = logger.bind(task_id=self.request.id)
     log.info("Starting sync task", dry_run=dry_run, force_full=force_full)
 
@@ -55,7 +55,7 @@ def health_check() -> dict:
 
         source_files, source_size = sync_service.get_remote_size(
             f"gdrive:{settings.gdrive_folder}/",
-            drive_shared=settings.gdrive_shared_with_me,
+            drive_shared=True,
         )
         dest_files, dest_size = sync_service.get_remote_size(f"s3:{settings.s3_bucket}")
 
@@ -68,18 +68,4 @@ def health_check() -> dict:
         }
     except Exception as e:
         log.exception("Health check failed")
-        return {"status": "error", "timestamp": datetime.utcnow().isoformat(), "error": str(e)}
-
-
-@app.task(name="tasks.verify_files")
-def verify_files() -> dict:
-    try:
-        sync_service.setup()
-        verified = sync_service.verify_critical_files()
-        return {
-            "status": "ok" if all(verified.values()) else "missing_files",
-            "timestamp": datetime.utcnow().isoformat(),
-            "files": verified,
-        }
-    except Exception as e:
         return {"status": "error", "timestamp": datetime.utcnow().isoformat(), "error": str(e)}

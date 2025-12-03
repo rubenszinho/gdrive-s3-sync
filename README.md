@@ -25,9 +25,12 @@ docker compose up -d
 | Variable                      | Description                               |
 | ----------------------------- | ----------------------------------------- |
 | `GOOGLE_SERVICE_ACCOUNT_JSON` | Service account JSON (raw or base64)      |
+| `GDRIVE_FOLDER`               | Google Drive folder name                  |
 | `S3_ENDPOINT`                 | S3-compatible endpoint                    |
 | `S3_ACCESS_KEY`               | S3 access key                             |
 | `S3_SECRET_KEY`               | S3 secret key                             |
+| `S3_BUCKET`                   | S3 bucket name                            |
+| `S3_REGION`                   | S3 region (default: `us-east-1`)          |
 | `SYNC_CRON_SCHEDULE`          | Cron expression (default: `0 6,18 * * *`) |
 
 ## Schedule Examples

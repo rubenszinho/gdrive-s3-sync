@@ -13,8 +13,8 @@ from celery import Celery
 
 celery_app = Celery(
     "sync_service",
-    broker=settings.celery_broker_url,
-    backend=settings.celery_result_backend,
+    broker=settings.redis_url,
+    backend=settings.redis_url,
 )
 
 app = FastAPI(
@@ -79,12 +79,6 @@ async def trigger_sync(request: SyncRequest):
 async def trigger_health_check():
     task = celery_app.send_task("tasks.health_check")
     return TaskResponse(task_id=task.id, status="queued", message="Health check queued")
-
-
-@app.post("/verify", response_model=TaskResponse)
-async def trigger_verify():
-    task = celery_app.send_task("tasks.verify_files")
-    return TaskResponse(task_id=task.id, status="queued", message="File verification queued")
 
 
 @app.get("/task/{task_id}")

@@ -10,8 +10,8 @@ from shared import settings
 
 app = Celery(
     "sync_service",
-    broker=settings.celery_broker_url,
-    backend=settings.celery_result_backend,
+    broker=settings.redis_url,
+    backend=settings.redis_url,
     include=["tasks"],
 )
 
